@@ -1,7 +1,9 @@
 ##Hello world- this is Kate Rovinski following along with R club example
 ## "Rclub_tidyverse.R" is the "clean" example
 
-
+#**********************************
+## Libraries
+#**********************************
 library(tidyr)
 library(dplyr)
 library(readxl)
