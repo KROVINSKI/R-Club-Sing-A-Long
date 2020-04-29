@@ -25,6 +25,12 @@ points(Individuals$Longitude[25:29],Individuals$Latitude[25:29], pch = 24, col =
 #if you used tiff run this: dev.off()  
 #it closes the tiff file
 
+#***************************************
+# Internet Connection
+# Exploring the getNOAA.bathy function
+#***************************************
+
+
 #Primnoa collections in SE Alaska
 #what if we just want shading or want the land to look fancier
 SE_AK<-getNOAA.bathy(lon1=-140, lon2=-131, lat1=54, lat2=59, resolution=1)
