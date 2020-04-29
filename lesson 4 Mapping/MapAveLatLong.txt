@@ -1,0 +1,5 @@
+Pop	Population	Longitude	Latitude
+1	Dixon	-132.9828853	54.63829394
+2	Shutter Ridge	-135.1149316	56.17922713
+3	Fairweather	-138.9037944	58.2457448
+4	Tracy Arm	-133.5895	57.8569
