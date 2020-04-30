@@ -9,6 +9,8 @@
 
 library(yarrr)
 library(schoolmath)
+library(ggplot2)
+library(nycflights13)
 
 
 #***************************************
@@ -75,7 +77,69 @@ for (i in 1:20){
 
 
 
+par(mfrow = c(2, 2))  
+
+# Set up a 2 x 2 plotting space. Because you set up the space with mfrow, the plotting space will be filled
+# row by row, left to right. Try out what happens if you use mfcol = c(2,2)
+# Create the loop.vector (all the columns)
 
 
+loop.vector <- 1:4
+for (i in loop.vector)  # Loop over loop.vector
+
+# store data in column.i as x
+
+    x <- examscores[,i]
+  
+  # Plot histogram of x
+  hist(x,
+       main = paste("Question", i),
+       xlab = "Scores",
+       xlim = c(0, 100))
+
+
+
+# 2-Dimensional Matrix with a loop
+  
+  results <- matrix(NA, nrow=length(unique(myData$Continent)), ncol=length(unique(myData$Month)))
+  #create a matrix of the correct size
+  for (i in 1: length(unique(myData$Continent))){  #indexing by name
+    for (j in 1:length(unique(myData$Month))){  #indexing by numerical index
+      x <- myData$AreaSampled[myData$Continent == unique(myData$Continent)[i] & myData$Month == j]
+      y <- myData$Barnacles[myData$Continent == unique(myData$Continent)[i] & myData$Month == j]
+      results[i,j] <- cor(x, y)
+    } 
+  }  
+  #This gives you a matrix of correlation coefficients; it's easiest to look at that in the form of a heatmap
+  heatmap(results, Rowv = NA, Colv = NA, labRow = unique(myData$Continent), xlab = "Month")
+  
+  
+
+  
+  # Creating loops for plots
+  
+  # For loops and nyc flights as exmaple
+  #
+  # Remember the `for` loop we asked for in the Problem Set2? Let's get back to it.
+  # Now let's try again the task originally assigned: make a `for` loop that creates an histogram of the departure times from each NY airport 
+  n.flights <- with (flights, table(dest)) # Get the number of flights to each airport
+  n.flights <- sort(desc(n.flights))    # Sort it
+  top10 <- names (n.flights)[1:10]      # Keep the names of the top10
+  orgin.airports <- unique(flights$origin)   # The departure airports, conveniently in a vector
+  
+  
+  
+# FOR LOOPs & WHILE LOOPs the difference 
+  
+# while - in case you don't know how many times you want to iterate
+
+
+  i <- 1
+  while (i^2 < 200) { 
+    print (paste("The square of", i, "is", i^2))
+    i <- i+1
+  }
+  
+  
 
 
