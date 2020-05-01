@@ -139,6 +139,18 @@ for (i in loop.vector)  # Loop over loop.vector
     print (paste("The square of", i, "is", i^2))
     i <- i+1
   }
+
+  
+#***************************************
+# Creating loops
+#***************************************
+  
+# apply and friends: lapply, sapply
+#   A way of performing loops without actually writing the loops is using the apply and related functions. These functions use:
+    
+#     An input dataset (upon which you want to perform the action)
+#   A function, which can either be built-in or customized
+#   The apply function works when your input dataset is a dataframe or a matrix, and you want to perform row-wise or column-wise operations.
   
   
 
