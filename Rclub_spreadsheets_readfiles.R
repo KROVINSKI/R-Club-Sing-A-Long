@@ -3,14 +3,17 @@
 # install and load packages
 # install.packages("tidyverse") -- remove comment if you need to install it
 
+library(tidyverse)
+library(tidyr)
+
 # set working directory
-setwd("~/Documents/statistics_resources/Rclub") # set the working directory
+setwd("/Users/katherinerovinski/GIT/R-Club-Sing-A-Long") # set the working directory
 
 # read steelhead return data from Sashin Creek, Alaska, 2019 -- in three flavors
 #### read as an excel file ####
 # Note that despite readxl being part of the tidyverse, it's not core tidyverse and needs to be explicitly loaded
 library(readxl) 
-steelhead_19_xl <- read_excel("2019 Sashin Omykiss data & weir notes R club.xlsx", sheet = "WILD adults - weir - R")
+steelhead_19_xl <- read_excel("2019 Sashin Omykiss data & weir notes R club (1).xlsx", sheet = "WILD adults - weir - R")
 # now click on the dataframe and see what it looks like after import
 
 # format dates
