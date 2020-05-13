@@ -3,7 +3,7 @@
 #### first read in the structure data for each K of interest, and each individual's admixture proportion to K ####
 # uses loop for reformatting the structure data
 # read in the files for structure plotting
-setwd("~/Documents/statistics_resources/Rclub/ggplot_show&tell")
+setwd("/Users/katherinerovinski/GIT/R-Club-Sing-A-Long/R club graphics share 2020.05.13/drive-download-20200513T191728Z-001/KMN_structureplots")
 
 YE_allPOP_NOPOPLOCPRIOR_K2 <- read.table(file = "./YE_allpop_structureoutput/K2.outfile", header = F)
 YE_allPOP_NOPOPLOCPRIOR_K3 <- read.table(file = "./YE_allpop_structureoutput/K3.outfile", header = F)
@@ -96,5 +96,5 @@ YEallPOP_STRUC_NOlocprior_K2toK5 <- grid.arrange(YEallPOP_STRUC_NOLOCPRIOR_K2toK
                                        ncol = 1, 
                                        heights = c(1,1,1,1.15)) #NOTE: to get these panels to look equal in size, I changed the distance between panels for the last plot to be like the others, and used this heights parameter
 
-setwd("~/Desktop/rockfish/RAD/dataprocess_FINAL0416")
+setwd("/Users/katherinerovinski/GIT/R-Club-Sing-A-Long/R club graphics share 2020.05.13/drive-download-20200513T191728Z-001/KMN_structureplots")
 save.image("CanYe_summaryplotsanddata_forConsGenet0917.RData")
