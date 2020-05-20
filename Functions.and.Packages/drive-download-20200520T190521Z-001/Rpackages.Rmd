@@ -69,6 +69,11 @@ usethis::use_test("temp-test")
 
 It tells you what it does!! now you can edit the test itself
 
+
+### THE EXPECT TOOL IS THE COOLEST
+
+
+
 paste this code in the newly created test-temp-test.R file
 
 ```{r}
