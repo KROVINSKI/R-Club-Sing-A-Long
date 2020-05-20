@@ -1,0 +1,92 @@
+---
+title: "Create your R package"
+author: "Ramon Gallego"
+date: "5/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval= FALSE)
+```
+
+## First step
+
+Install the following packages
+
+```{r echo = T, eval = F}
+install.packages(c('testthat', 'usethis', 'roxygen2'))
+```
+
+## Go to the dropdown option on the top-right corner of Rstudio 
+Click New Project -> New Directory -> R package
+
+Give it a name
+
+If available, tick the box for create a git repo
+
+Tick the Open in new session
+
+Click in 'Create Project'
+
+
+## Description
+
+Edit the Title and description fields
+
+## R
+
+Add the functions in a R script
+
+## documentation
+
+go to the r packages  (book)[http://r-pkgs.had.co.nz/man.html]
+
+Copy the code chunk that starts with #', and paste them on top of every function in our Temperatures.r file
+
+Edit to your liking
+
+run this from the console
+
+```{r}
+devtools::document()
+```
+
+THis creates the new help file
+
+Test it
+```{r}
+?fahrenheit_to_celsius
+```
+
+## tests
+
+They are really important - check values and functionalities
+
+Run this
+```{r}
+usethis::use_test("temp-test")
+```
+
+It tells you what it does!! now you can edit the test itself
+
+paste this code in the newly created test-temp-test.R file
+
+```{r}
+test_that("f2C works", {
+  expect_equivalent(round(fahrenheit_to_celsius(0),2), -17.78)
+})
+
+test_that("f2C vectors", {
+  expect_equal(fahrenheit_to_celsius(c(0,100)), c(-17.7778, 37.7778))
+})
+
+```
+
+Save it
+
+Now you can test if the function works
+
+click Ctrl (or cmd in mac) + shift + T
+
+
+

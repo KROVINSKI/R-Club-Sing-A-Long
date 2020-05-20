@@ -1,0 +1,566 @@
+---
+title: "lesson5_wk_loops_slides"
+author: "Kate.Rovinski"
+date: "5/14/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+---
+title: 'Lecture 5: Loops and Related Iterations'
+author: "Kelly and Gallego"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: default
+    nature:
+      highlightStyle: github
+      highlightLines: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=T)
+library(yarrr)
+library(dplyr)
+library(kableExtra)
+
+```
+
+```{css, echo = FALSE }
+.pull-left {
+  float: left;
+  width: 44%;
+}
+.pull-right {
+  float: right;
+  width: 44%;
+}
+.pull-right ~ p {
+  clear: both;
+}
+# .remark-slide-content {
+#   font-size: 28px;
+#   padding: 20px 80px 20px 80px;
+# }
+.remark-code, .remark-inline-code {
+  background: #f0f0f0;
+}
+.remark-code {
+  font-size: 10px;
+}
+.huge .remark-code { /*Change made here*/
+  font-size: 200% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 80% !important;
+}
+```
+
+
+Do you ever find yourself repeating yourself, doing the same thing over and over and over again, redundantly? **R** has a solution for you.  
+
+Picture this: You have some information that you've collected across different months of the year.  Let's say you've counted barnacles on rocks each month, and you have the following dataset (which we'll create here from scratch):
+
+
+```{r MyData, eval=T, echo=T}
+set.seed(108)
+  AreaSampled <- round(runif(1200, min = 1, max = 100), 2)
+  Barnacles <- round(rnorm(n = 1200, mean = 1000, sd = 100)*AreaSampled, 0)
+  Month <- rep(1:12, each = 100)
+  Continent <- sample(c("Africa", "Asia", "Europe", "NAmerica", "SAmerica", "Australia", "Antarctica"), 1200, replace =T) 
+
+  myData <- tibble(AreaSampled, Barnacles, Month, Continent)
+  
+kable(myData) %>% 
+kable_styling(full_width = T, fixed_thead = T) %>% 
+     scroll_box( height = "500px")
+```
+
+
+
+ 
+---
+ 
+How might you find out about the relationship between barnacles and the area you sampled, and whether that is different during different months of the year or on different continents? 
+
+In Excel, you'd spend a day plotting different subsets of data. You'd make many graphs. Your wrist would be tired from using the mouse/trackpad.  
+
+With **R**, you can just write a loop: for every month (for example), run a new correlation 
+
+```{r}
+  results.vector <- c()                             #create an empty container in which to store results
+ for (i in 1:length(unique(myData$Month))){         #set up the loop; for each unique Month...
+    x <- myData$AreaSampled[myData$Month == i]      #create a subset of AreaSampled in that Month...
+    y <- myData$Barnacles[myData$Month == i]        #create a subset of Barnacles counted in that Month...
+ results.vector[i] <- cor(x, y)
+  }
+
+plot(y = results.vector, x = 1:12)  #no, doesn't look like it
+
+
+
+```
+
+---
+
+The basic idea of a *for loop* is to do the same calculation (above, *cor()*) many times, while changing something about the data in each iteration.  It can be as simple as:
+
+```{r}
+for(i in 1:5){    #for each value of an iteration variable
+  print(paste0("Number ", i))        #do this thing 
+}                 #and when you hit the closure bracket, go back and change the iteration variable to the next value in line, and start over. 
+```
+
+By convention, the *iteration variable* is often called *i* or *j* or *k*, but it can be whatever you want.  For example:
+
+```{r}
+for (YARRRR in 1:5){
+  print(YARRRR * 10)
+}
+```
+
+Or you can skip the *iteration variable*
+
+```{r}
+for (k in 1:3){
+  print("Hello")
+}
+```
+
+---
+
+### Quick exercise
+
+The function `is.prim(x)` from the package 'schoolmath' returns a logical result (TRUE / FALSE) telling you whether the number `x` is a prime number.
+
+Create a `for` loop that returns a vector telling you whether numbers from 1 to 20 are prime or not, like:
+
+the number 1 is prime - TRUE
+.
+.
+.
+the number 4 is prime - FALSE
+
+(Note: the function `paste` allows you to paste together text, numbers, variables...)  
+
+--
+.pull-left[
+```{r exerc1, echo = T, eval=FALSE}
+#install.packages('schoolmath')
+library('schoolmath')
+
+for (i in 1:20){
+print (paste("The number ", i, "is prime", is.prim(i)))
+}
+
+```
+
+]
+
+.pull-right[
+```{r ref.label="exerc1", echo = F, message=FALSE, warning=F}
+
+```
+
+]
+---
+
+## Creating multiple plots with a loop
+
+ 
+
+.left-column[
+
+```{r plotloop, echo = T, eval = F}
+par(mfrow = c(2, 2))  # Set up a 2 x 2 plotting space. Because you set up the space with mfrow, the plotting space will be filled
+                      # row by row, left to right. Try out what happens if you use mfcol = c(2,2)
+
+# Create the loop.vector (all the columns)
+loop.vector <- 1:4
+
+for (i in loop.vector) { # Loop over loop.vector
+
+  # store data in column.i as x
+  x <- examscores[,i]
+  
+  # Plot histogram of x
+  hist(x,
+       main = paste("Question", i),
+       xlab = "Scores",
+       xlim = c(0, 100))
+}
+```
+]
+
+.right-column[
+```{r ref.label="plotloop", eval=T, echo=F}
+
+```
+
+]
+
+
+---
+
+You can even do loops inside of loops (that is, across multiple variables), although professional programmers frown upon this because it is slow and there are usually better ways to do what you want to do.
+
+```{r, fig.height=5}
+results <- matrix(NA, nrow=length(unique(myData$Continent)), ncol=length(unique(myData$Month)))
+  #create a matrix of the correct size
+
+for (i in 1: length(unique(myData$Continent))){  #indexing by name
+  for (j in 1:length(unique(myData$Month))){  #indexing by numerical index
+    
+    
+    x <- myData$AreaSampled[myData$Continent == unique(myData$Continent)[i] & myData$Month == j]
+    y <- myData$Barnacles[myData$Continent == unique(myData$Continent)[i] & myData$Month == j]
+    
+    results[i,j] <- cor(x, y)
+  } 
+}  
+
+#This gives you a matrix of correlation coefficients; it's easiest to look at that in the form of a heatmap
+heatmap(results, Rowv = NA, Colv = NA, labRow = unique(myData$Continent), xlab = "Month")
+
+```
+
+---
+
+### Quick-ish exercise
+```
+Remember the `for` loop we asked for in the Problem Set2? Let's get back to it.
+
+Now let's try again the task originally assigned: make a `for` loop that creates an histogram of the departure times from each NY airport to each of the top destinations.
+```
+
+
+```{r task2, message= F}
+library(nycflights13)
+
+ n.flights <- with (flights, table(dest)) # Get the number of flights to each airport
+    n.flights <- sort(desc(n.flights))    # Sort it
+    top10 <- names (n.flights)[1:10]      # Keep the names of the top10
+    
+orgin.airports <- unique(flights$origin)   # The departure airports, conveniently in a vector
+
+```
+
+<!-- 
+par (mar = c(0,0,0.5,0.5), mfcol = c(10,3), lty = 1) # Two things - Change the margins so the plots fit ; and do the plots by column
+dep.airports = unique(flights$origin)
+
+for (ori in dep.airports){
+  for (dest in top10){
+  
+  plot(density(flights$sched_dep_time[flights$origin == ori | flights$dest == dest]),
+  xlim = c (0,2400),
+  main = paste0("From ", ori , " to ", dest))
+  }
+}
+    -->
+
+
+### `while` - in case you don't know how many times you want to iterate
+
+One characteristic of the `for` loop is that you need to know what are you iterating over *before* you start the loop. An absurd example would be to calculate the squared value of natural numbers until the square value is greater than 200
+
+```{r while loop}
+
+i <- 1
+
+while (i^2 < 200) { 
+  
+  print (paste("The square of", i, "is", i^2))
+  i <- i+1
+  
+}
+
+```
+
+---
+
+If you like diagrams, here you have a comparison of `for` and `while` loops
+
+![diagrams](images/forwhile.png)
+
+The usual structure of a `while` loop includes two sets of commands (i1 and i2 in the diagram). The first one is usually what you actually want the loop to do. The second one sets up the next step in the iteration (in our example, `i <- i + 1`)
+
+# But.. shall we use loops at all?
+
+---
+
+
+There are two things to consider:
+
+* when is it worth to write a `for` loop rather than type things out?
+
+* are there other options instead of doing `for` loops?
+
+For the first question, the rule of thumb is to use a `for` loop if you are doing something more than three times. But it also depends on how hard is it to iterate over your data.
+
+For the second question, yes there are. Some of them are **built-in**. And you have been using them already. For example, imagine you have a dataframe and you want to multiply each element of the dataframe by 10.
+
+If you want to, you can do a nested `for` loop to accomplish that task... but it's definitely not the easiest way.
+
+```{r loop or not.1}
+
+test.df <-  replicate(10, rnorm(10, mean = 20)) # a matrix of 10 x 10
+
+test.df <- as.data.frame(test.df) # Coerce it into a dataframe
+
+# Doing things the hard way
+for ( i in 1:ncol(test.df)){  # Loop over the columns
+  for (j in 1:nrow(test.df)){ # Nested loop over rows
+    test.df[j,i]<- 10*test.df[j,i]
+ }
+}
+
+# Using built-in features in R
+
+test.df <- 10 * test.df
+
+
+```
+
+---
+
+#### `apply` and friends: `lapply`, `sapply`
+
+A way of performing loops without actually writing the loops is using the `apply` and related functions. These functions use:
+
+* An input dataset (upon which you want to perform the action)
+* A function, which can either be built-in or customized
+
+
+
+The `apply` function works when your input dataset is a dataframe or a matrix, and you want to perform row-wise or column-wise operations.
+
+Let's imagine you have data from the composition of the intertidal communities on 5 beaches.
+
+```{r apply1}
+Beach.comm <-  round(replicate(10, rnorm(5, mean = 20, sd = 4)),0) # A matrix of 10x5
+
+Beach.comm <- as.data.frame(Beach.comm, row.names = paste("Beach", LETTERS[1:5])) # a dataframe, now with row names
+
+colnames(Beach.comm) <- paste("Species", 1:10) # And also column names
+```
+
+
+```{r apply, echo=F}
+kable(Beach.comm) %>% 
+  kable_styling(full_width = T, fixed_thead = T) %>% 
+   scroll_box( height = "500px")
+```
+
+
+---
+
+Let's say we want a summary of the abundances by beach first, and similarly by species
+
+```{r apply-2}
+
+apply(Beach.comm, 1, summary) # Summary stats by row (Beach)
+
+apply(Beach.comm, 2, summary) # Summary stays by column (Species)
+
+```
+
+---
+
+### Quick exercise this time for real
+
+
+Using the Beach.comm dataset, calculate the standard deviation of the counts for each species
+
+
+-- 
+
+.pull-left[
+### Using apply
+```{r withapply, eval=F}
+apply(Beach.comm, 2, sd)
+```
+]
+
+.pull-right[
+### Using a for loop
+```{r, eval = F}
+results.sd <- NULL
+
+for (j in 1:ncol(Beach.comm)){
+  
+results.sd[j]<- sd(Beach.comm[,j])
+names(results.sd)[j] <- colnames(Beach.comm)[j]
+
+}
+results.sd
+```
+]
+
+--
+```{r ref.label="withapply", echo=FALSE}
+
+```
+
+nice
+
+---
+
+### `lapply()` 
+
+**R** has a way of simplifying loops a bit, because they can get unwieldy.  
+
+.pull-left[
+Instead of 
+```{r eval = F}
+for(i in 1:5){print(i)}
+```
+]
+
+.pull-right[
+you can write
+```{r eval = F}
+lapply(1:5, print)
+```
+]
+
+ which does the same thing as the loop.  Here's how it works:  
+
+ `lapply(x = SOME_VECTOR, FUN = SOME_FUNCTION)`, and executing this code just applies the specifed function to each value in the vector, and creates the output in a list. For example:
+
+```{r warning=F}
+
+lapply(myData, mean) 
+
+```
+
+---
+
+#### Saving Computation Time with Large Datasets
+
+Another good example when we shouldn't use a `for` loop is when we want to subset data, and do an operation on that subset. Although *easy* to understand when reading / writing the code, it is an inefficient way of facing that problem, and that can lead to long execution times when done with big datasets.
+
+Let's say we have a big dataset in which the column Continent has five levels, and we want to do an operation to each of the five subsets of the data. A for loop will look something like this
+
+.pull-left[
+```{r no loop please}
+
+for (i in levels(myData$Continent)){  # For each level of the factor Continent
+  set <- myData[myData$Continent == i,]# subset the data
+  print (mean(set$Barnacles))   # calculate the mean barnacle area
+}
+
+```
+]
+
+
+![Step_0](images/2kozun.gif)
+---
+An alternative way of doing this - there are many - is to split the dataframe first, and then calculate the mean to each of the subsets
+.pull-left[
+![split first](images/noloop5.jpeg)
+]
+.pull-right[
+```{r split first}
+
+my.data.list <- split(x = myData, f = Continent) # Split a dataframe into a list, each element of the list is one subset
+
+lapply(my.data.list, function(x) mean(x$Barnacles)) # calculate the mean area of barnacle 
+
+
+```
+]
+
+
+### Regarding Lists
+
+Here's what the *Pirate's Guide* has to say about Lists. 
+>A list is a special object in R that can store virtually *anything*. You can have a list that contains several vectors, matrices, or dataframes of any size. If you want to get really Inception-y, you can even make lists of lists (of lists of lists....).
+---
+
+>Let's say you are conducting a loop where the outcome of each index is a vector. However, the length of each vector could change - one might have a length of 1 and one might have a length of 100. How can you store each of these results in one object? Unfortunately, a vector, matrix or dataframe might not be appropriate because their size is fixed. The solution to this problem is to use a `list()`.
+
+So a list can be handy for keeping things together in a single object, especially if those things are of different sizes.
+
+Remember indexing?  As in, you can get the 4th element of a vector using the notation `vectorname[4]`?  Lists work on the same principle. But since lists can have nested levels, you can have multiple indices.  For example:
+
+```{r}
+myList <- list(a=c(1,2,3), b=list(c(7,8,9)), c="11")  #see? the elements aren't the same length. And that's fine.
+```
+
+```{r}
+
+myList[1]  #gives the first element of the list, which is itself a vector of 3 numbers. Confusingly enough, this is a list
+
+myList$a  #you can also used named indices, which will just return the vector itself (not in list form)
+
+myList[[1]][2:3] #gives the second and third elements OF THE FIRST element of the list
+
+myList$a[2:3] #does the same thing
+
+```
+
+---
+
+And if ever you want to pull things out of a list and make them into (say) a vector or a data.frame, 
+```{r}
+unlist(myList)  #this will do it
+
+as.data.frame(myList) #or you can try to coerce it to a specific class of object, like this, but you might get results you don't love. In this case, because the vectors in $A, $B, and $C weren't of the same length, R recycled the $C to match the length of the other two, so that it could create a dataframe with columns of equal length. So watch out for that.
+```
+
+
+OK, that's enough of lists... just know that you will run into them, and you should know what they are.
+
+---
+
+
+### Custom functions  (if for some reason we have time)
+
+**R** has many, many packages. And they come with many different functions. But sometimes you want to create your own function that is - obviously - tailored to your needs.
+
+Functions rely on different parameters. Some of them you will fix. Some of them you want to specify them every time you use the function. 
+
+Let's say that you want to create your own summary function, in which, for each species on our Beach.comm dataset, you want to know the maximum, minimum and average value of them across the five beaches.
+
+```{r custom functions}
+
+summ.barn <- function (x){ # the function only takes one variable, the species
+  c(maximum.value = max(x), # We set up the output as combined, with names
+    minimum.value = min(x),
+    mean.value    = mean(x, na.rm = T))
+}
+
+apply(Beach.comm, 2, summ.barn)
+
+# Fun thing, our function also works for each beach
+ 
+apply (Beach.comm, 1, summ.barn)
+
+```
+
+
+
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
