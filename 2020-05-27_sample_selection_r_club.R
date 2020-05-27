@@ -4,7 +4,7 @@ library(tidyverse)
 
 # load HAKE sample metadata
 # We can't share coordinates so lat and long have been removed
-load(file = "/Volumes/HOME/Documents/scripts/r_club/GL_sample_selection/Hake_DFO_FEAT.Rdata")
+load(file = "/Users/katherinerovinski/GIT/R-Club-Sing-A-Long/Hake_DFO_FEAT.Rdata")
 
 DFO_FEAT
 
@@ -18,7 +18,7 @@ DFO_FEAT %>%
 set.seed(9)
 DFO_FEAT_extract <- DFO_FEAT %>% 
   group_by(box) %>% 
-  sample_n(35) %>%
+  sample_n(35, replace = TRUE) %>%
   ungroup()
 
 # show me the distinct rows
